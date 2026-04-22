@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)file:///Users/michellelasalle/Downloads/index_2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{padding:20px 0 60px}
+.nav{display:flex;gap:6px;margin-bottom:24px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:16px;flex-wrap:wrap}
+.nav-btn{font-size:13px;padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid transparent;background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.nav-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-btn.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-secondary)}
+.view{display:none}.view.active{display:block}
+
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px}
+.agent-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;cursor:pointer;transition:border-color .15s}
+.agent-card:hover{border-color:var(--color-border-secondary)}
+.agent-card.selected{border:2px solid var(--color-border-info)}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;margin-bottom:10px}
+.av-pai{background:var(--color-background-info);color:var(--color-text-info)}
+.av-cf{background:var(--color-background-success);color:var(--color-text-success)}
+.agent-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.agent-team{font-size:11px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:8px}
+.team-pai{background:var(--color-background-info);color:var(--color-text-info)}
+.team-cf{background:var(--color-background-success);color:var(--color-text-success)}
+.agent-focus{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;line-height:1.5}
+.agent-sessions{font-size:11px;color:var(--color-text-tertiary)}
+.progress-bar{height:4px;background:var(--color-background-tertiary);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--color-border-info);border-radius:2px;transition:width .3s}
+.checkpoint-dots{display:flex;gap:4px;margin-top:6px}
+.cp-dot{width:8px;height:8px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary)}
+.cp-dot.done{background:var(--color-text-success);border-color:var(--color-text-success)}
+.cp-dot.due{background:var(--color-text-warning);border-color:var(--color-text-warning)}
+.mgr-table{width:100%;border-collapse:collapse;font-size:13px}
+.mgr-table th{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-align:left;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap}
+.mgr-table td{padding:10px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.mgr-table tr:last-child td{border-bottom:none}
+.mgr-table tr:hover td{background:var(--color-background-secondary)}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.status-on{background:var(--color-text-success)}
+.status-warn{background:var(--color-text-warning)}
+.status-off{background:var(--color-border-secondary)}
+.pulse-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.pulse-done{background:var(--color-background-success);color:var(--color-text-success)}
+.pulse-miss{background:var(--color-background-danger);color:var(--color-text-danger)}
+.pulse-none{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+.improvement-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.improvement-num{font-size:20px;font-weight:500;color:var(--color-text-tertiary);min-width:24px;line-height:1.3}
+.improvement-text{font-size:13px;color:var(--color-text-primary);flex:1;line-height:1.5}
+.improvement-date{font-size:11px;color:var(--color-text-tertiary);white-space:nowrap;margin-top:2px}
+.conf-bar{height:6px;background:var(--color-background-tertiary);border-radius:3px;overflow:hidden;width:60px;display:inline-block;vertical-align:middle;margin-right:6px}
+.conf-fill{height:100%;border-radius:3px;background:var(--color-border-info)}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:500;margin-bottom:14px;color:var(--color-text-primary)}
+label{font-size:13px;color:var(--color-text-secondary);display:block;margin-bottom:5px}
+input,select,textarea{width:100%;font-size:13px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;margin-bottom:12px;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--color-border-primary)}
+textarea{resize:vertical;min-height:80px}
+.btn{font-size:13px;padding:8px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.btn-primary:hover{opacity:.85}
+.btn-success{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
+.btn-success:hover{opacity:.85}
+.btn-warning{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
+.btn-warning:hover{opacity:.85}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+
+.session-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px}
+.session-header{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.session-date{font-size:12px;color:var(--color-text-tertiary)}
+.session-types{display:flex;gap:4px;flex-wrap:wrap}
+.type-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.tb-quiz{background:var(--color-background-warning);color:var(--color-text-warning)}
+.tb-scenario{background:#EEEDFE;color:#3C3489}
+.tb-explainer{background:var(--color-background-success);color:var(--color-text-success)}
+.tb-foundation{background:var(--color-background-info);color:var(--color-text-info)}
+.session-note{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-top:4px}
+.session-ticket{font-size:12px;color:var(--color-text-info);margin-top:4px;font-style:italic}
+.session-rating{font-size:11px;color:var(--color-text-tertiary);margin-top:4px}
+
+.summary-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-size:13px;line-height:1.7;color:var(--color-text-secondary);white-space:pre-wrap;min-height:60px}
+.prompt-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-size:12px;line-height:1.7;color:var(--color-text-secondary);font-family:var(--font-mono);white-space:pre-wrap;margin-bottom:8px;position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary)}
+.copy-btn:hover{background:var(--color-background-secondary)}
+.type-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.type-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary)}
+.type-pill.selected-quiz{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
+.type-pill.selected-scenario{background:#EEEDFE;color:#3C3489;border-color:transparent}
+.type-pill.selected-explainer{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
+.type-pill.selected-foundation{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.stars{display:flex;gap:4px;margin-bottom:12px}
+.star{font-size:18px;cursor:pointer;color:var(--color-border-secondary);transition:color .1s;line-height:1}
+.star.lit{color:#EF9F27}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.metric-val{font-size:22px;font-weight:500;margin-bottom:2px}
+.metric-lbl{font-size:11px;color:var(--color-text-tertiary)}
+.empty{font-size:13px;color:var(--color-text-tertiary);text-align:center;padding:32px 0;font-style:italic}
+.loading{font-size:13px;color:var(--color-text-tertiary);font-style:italic}
+.doc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.doc-name{font-size:13px;flex:1;color:var(--color-text-primary)}
+.doc-remove{font-size:12px;color:var(--color-text-tertiary);cursor:pointer;padding:2px 6px;border-radius:4px;border:none;background:transparent}
+.doc-remove:hover{color:var(--color-text-danger);background:var(--color-background-danger)}
+.section-head{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:12px;margin-top:4px}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:20px 0}
+.agent-select-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--color-border-secondary);border-top-color:var(--color-text-primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Checkpoint cards */
+.checkpoint-section{margin-top:20px}
+.checkpoint-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px;margin-bottom:10px}
+.checkpoint-card.unlocked{border-color:var(--color-border-secondary)}
+.checkpoint-card.completed{border-color:var(--color-text-success);background:var(--color-background-success)}
+.checkpoint-card.locked{opacity:.5}
+.cp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cp-title{font-size:13px;font-weight:500}
+.cp-status{font-size:11px;padding:2px 8px;border-radius:10px}
+.cp-status.done{background:var(--color-background-success);color:var(--color-text-success)}
+.cp-status.ready{background:var(--color-background-warning);color:var(--color-text-warning)}
+.cp-status.locked{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+.cp-desc{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;line-height:1.5}
+.cp-output{margin-top:10px}
+
+/* Martin badge */
+.martin-badge{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--color-background-info);color:var(--color-text-info);font-weight:500;margin-left:6px}
+
+.tab-row{display:flex;gap:4px;margin-bottom:16px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0}
+.tab-btn{font-size:12px;padding:6px 12px;border:none;background:transparent;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all .15s}
+.tab-btn.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <button class="nav-btn active" onclick="showView(&#39;team&#39;)">Team overview</button>
+    <button class="nav-btn" onclick="showView(&#39;manager&#39;)">Manager dashboard</button>
+    <button class="nav-btn" onclick="showView(&#39;log&#39;)">Log a session</button>
+    <button class="nav-btn" onclick="showView(&#39;prompts&#39;)">Prompt library</button>
+    <button class="nav-btn" onclick="showView(&#39;settings&#39;)">Docs &amp; agents</button>
+  </div>
+
+  <!-- TEAM OVERVIEW -->
+  <div class="view active" id="view-team">
+    <div id="agent-grid" class="agent-grid"></div>
+    <div id="team-detail"></div>
+  </div>
+
+  <!-- MANAGER DASHBOARD -->
+  <div class="view" id="view-manager">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:14px;font-weight:500">Team snapshot</div>
+        <button class="btn" onclick="generateAllSummaries()" id="gen-all-btn">Generate bi-weekly report</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="mgr-table">
+          <thead><tr>
+            <th>Agent</th><th>Team</th><th>Sessions</th><th>Avg confidence</th>
+            <th>Checkpoints</th><th>This week</th><th>Pattern Pulse</th><th>Status</th>
+          </tr></thead>
+          <tbody id="mgr-table-body"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:4px"><span class="status-dot status-on"></span>On track</span>
+        <span style="display:inline-flex;align-items:center;gap:4px"><span class="status-dot status-warn"></span>Check in — no session this week</span>
+        <span style="display:inline-flex;align-items:center;gap:4px"><span class="status-dot status-off"></span>Not started</span>
+      </div>
+    </div>
+
+    <div id="all-summaries-output"></div>
+
+    <div class="card">
+      <div class="card-title">Process improvements log</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6">Note insights as they surface from bi-weekly summaries and Pattern Pulse observations. Goal: 5 documented improvements by end of Q2.</div>
+      <div id="improvements-list"></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-top:8px">
+        <textarea id="new-improvement" placeholder="Describe the process improvement insight..." style="margin:0;flex:1;min-height:60px"></textarea>
+        <button class="btn btn-primary" onclick="addImprovement()" style="white-space:nowrap">Add</button>
+      </div>
+      <div id="imp-msg" style="font-size:12px;color:var(--color-text-success);margin-top:8px;min-height:16px"></div>
+    </div>
+  </div>
+
+  <!-- LOG SESSION -->
+  <div class="view" id="view-log">
+    <div class="card">
+      <div class="card-title">Log a training session</div>
+      <div class="agent-select-row">
+        <label style="margin:0;white-space:nowrap">Agent</label>
+        <select id="log-agent" style="margin:0" onchange="updateSessionTypes()"></select>
+      </div>
+      <label>Session type (select all that apply)</label>
+      <div class="type-pills" id="type-pills-container">
+        <button class="type-pill" onclick="toggleType(&#39;quiz&#39;,this)">Quiz</button>
+        <button class="type-pill" onclick="toggleType(&#39;scenario&#39;,this)">Scenario</button>
+        <button class="type-pill" onclick="toggleType(&#39;explainer&#39;,this)">Concept explainer</button>
+      </div>
+      <label>Topic covered</label>
+      <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
+      <label>What did you learn or practice?</label>
+      <textarea id="log-notes" placeholder="Brief notes from the session — these feed into your progress reports..."></textarea>
+      <label>Real ticket applied (optional — Intercom conversation ID or brief description)</label>
+      <input type="text" id="log-ticket" placeholder="e.g. #215473834248644 — gateway connection issue">
+      <label>Confidence after this session</label>
+      <div class="stars" id="star-row">
+        <span class="star" onclick="setStar(1)">★</span>
+        <span class="star" onclick="setStar(2)">★</span>
+        <span class="star" onclick="setStar(3)">★</span>
+        <span class="star" onclick="setStar(4)">★</span>
+        <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveSession()">Save session</button>
+        <button class="btn" onclick="clearLog()">Clear</button>
+      </div>
+      <div id="log-msg" style="font-size:12px;color:var(--color-text-success);margin-top:10px;min-height:18px"></div>
+    </div>
+  </div>
+
+  <!-- PROMPT LIBRARY -->
+  <div class="view" id="view-prompts">
+    <div class="card">
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="showTab(&#39;tab-general&#39;, this)">General</button>
+        <button class="tab-btn" onclick="showTab(&#39;tab-pai&#39;, this)">PAI agents</button>
+        <button class="tab-btn" onclick="showTab(&#39;tab-cf&#39;, this)">CF agents</button>
+        <button class="tab-btn" onclick="showTab(&#39;tab-martin&#39;, this)">Martin — tech foundations</button>
+        <button class="tab-btn" onclick="showTab(&#39;tab-reports&#39;, this)">Progress reports</button>
+        <button class="tab-btn" onclick="showTab(&#39;tab-daniel&#39;, this)">Daniel — weekly contribution</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-general">
+        <div class="section-head">Quiz</div>
+        <div class="prompt-box">Quiz me on [TOPIC] using only the content in this doc. Go one question at a time. Tell me if I'm right or wrong before moving to the next, and explain why if I'm wrong. At the end, tell me which questions I struggled with.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Give me a 5-question quiz on [TOPIC]. Vary the format — some multiple choice, some open-ended. Score me at the end and explain any I missed.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Scenario walkthrough</div>
+        <div class="prompt-box">Using the doc I've pasted, give me a realistic [TOPIC] scenario and let me work through it step by step. Pause at each decision point and wait for my answer before continuing. Tell me at the end what I got right and what I missed.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Roleplay as a [merchant / customer] with a [TOPIC] issue. I'll respond as the support agent. After the scenario ends, rate my response on tone, accuracy, and policy adherence.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Concept explainer</div>
+        <div class="prompt-box">Using the doc below, explain [TOPIC] like I'm learning it for the first time. Use a real example. After the explanation, give me a one-sentence rule I can use to remember the key distinction.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">I keep confusing [CONCEPT A] and [CONCEPT B]. Using the doc, explain the difference and give me 3 scenarios where I'd need to tell them apart.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+
+      <div class="tab-panel" id="tab-pai">
+        <div class="section-head">Gateway troubleshooting (Manuel)</div>
+        <div class="prompt-box">A merchant says their PAI gateway is showing "Configuration in progress" but they believe everything is set up. Walk me through the diagnostic questions I should ask first, what I can check myself, and when this needs to go to #masterborn-pai-features-support vs #support-paymentsai.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Roleplay as a merchant who can't connect their Shopify store to PAI. I'll be the agent. After the scenario, tell me: did I ask for the right information upfront? Were my instructions specific enough for the merchant to follow?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Merchant vs merchant's customer (Manuel)</div>
+        <div class="prompt-box">Explain the difference between a PAI merchant contacting support and a merchant's end customer contacting support. Give me 3 examples of each, and for each example tell me what the correct resolution path is and what PAI can and can't do.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">PAI login &amp; 2FA (Edialys)</div>
+        <div class="prompt-box">Explain how PAI's login and 2FA flow differs from ClickFunnels. What are the most common failure points, what can the agent resolve, and when does it need to be escalated to Masterborn?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">A merchant can't log in — they're not receiving their verification code. Give me a step-by-step troubleshooting guide. At each step, tell me what I'm checking for and what the next step is if it doesn't resolve.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Masterborn vs support-paymentsai routing</div>
+        <div class="prompt-box">Here are 10 PAI support situations. For each one, tell me: handle it yourself, ask in #support-paymentsai, or escalate to #masterborn-pai-features-support — and explain why:
+1. Merchant says their payout is blocked and asks why
+2. Merchant wants to change their payout currency from CAD to USD
+3. Merchant's gateway shows "Configuration in progress" despite Adyen showing verified
+4. Merchant asks about their chargeback rate and what it means
+5. Merchant can't receive their 2FA code
+6. Merchant wants to delete their PAI account with no active transactions
+7. Merchant has a negative balance in a different currency that needs converting
+8. Merchant asks if international cards are charged at a different rate
+9. Merchant wants to change their business type from company to sole proprietor
+10. Merchant's customer is disputing a charge — merchant already submitted a refund<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Payout disputes &amp; currency (Dylan / Edialys)</div>
+        <div class="prompt-box">A merchant contacts PAI — their payout has been blocked for several days. Walk me through: what do I check first, how do I explain the reason to the merchant clearly, what can I resolve myself, and when do I need to loop in the team?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+
+      <div class="tab-panel" id="tab-cf">
+        <div class="section-head">Funnel building (Karla)</div>
+        <div class="prompt-box">Explain how to set up a 2-step order form with an order bump and an upsell in ClickFunnels 2.0. Walk me through the steps in order. After the explanation, quiz me with 3 questions about where things commonly go wrong.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">What are the key differences between how order bumps and upsells work in CF Classic vs CF2? Give me a scenario where a customer is confused about why their order bump isn't showing, and help me diagnose it.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Course access &amp; challenges (Martin)</div>
+        <div class="prompt-box">Quiz me on how course access works in ClickFunnels — specifically OFA, the 1CC challenge, and Funnel Builder Certification. Cover: how access is granted, common reasons it fails, and what support can and can't do.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Account access &amp; 2FA (Peter)</div>
+        <div class="prompt-box">A customer can't log in — they've lost access to their 2FA authenticator app. Walk me through every step of the account recovery process. Tell me what I can do, what requires escalation, and what information I need to collect to verify the account.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Page editor &amp; publishing (Cris)</div>
+        <div class="prompt-box">A customer says their page looks fine in the editor but is broken when published. What are the most common causes of this, and how do I diagnose them step by step? After explaining, give me a scenario to work through.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Explain how domain connection and publishing work in CF2. What are the most common points of failure and what does each error message mean?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">CF billing — escalated bot threads (Dylan / Edialys / all CF)</div>
+        <div class="prompt-box">Here is a CF cancellation thread where Fin already handled verification and processed the refund. The customer came back saying the refund hasn't appeared. Read the thread and write the best reply — one that's complete, empathetic, and doesn't invite more follow-up questions:
+
+[PASTE THREAD HERE]<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+
+      <div class="tab-panel" id="tab-martin">
+        <div style="background:var(--color-background-info);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--color-text-info);line-height:1.6">Martin is building a foundation in CF technical support from scratch. These prompts are structured to teach progressively — start with fundamentals before moving to troubleshooting and scenarios.</div>
+        <div class="section-head">Stage 1 — foundations (sessions 1–5)</div>
+        <div class="prompt-box">Explain how the ClickFunnels 2.0 page editor works — what are the main elements, how is a page structured, and what are the most important settings a support agent needs to know about? Treat me as someone new to technical support.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Explain what a funnel is in CF2 and how it's structured. What are the key components (pages, steps, products, domains) and how do they connect? Use a simple example. After explaining, ask me 3 basic questions to check my understanding.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Explain how domain connection works in CF2. What does "publishing" a page mean, what can go wrong, and what are the most common errors customers report?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Stage 2 — pattern recognition (sessions 6–10)</div>
+        <div class="prompt-box">Show me a real-world CF2 technical support question a customer might send. Then walk me through how an experienced agent would diagnose it — what questions they'd ask, what they'd check, and why. Do this for 3 different types of technical issues.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">What questions should I always ask a customer before I start troubleshooting a technical issue? Explain why each question matters and what it rules in or out.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">I'm new to tech support. What are the 10 most common CF2 technical issues customers report? For each one, give me a one-line description, the most likely cause, and the first thing I should check.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Stage 3 — guided scenarios (sessions 11+)</div>
+        <div class="prompt-box">Give me a beginner-level CF2 technical support scenario. I'll respond as the agent. Guide me through it — if I miss something important, give me a hint rather than the answer. At the end, tell me what I did well and what I missed.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="prompt-box">Give me a CF2 technical ticket to work through. After I've written my reply, review it and tell me: is the diagnosis correct? Is the reply clear and complete? Would the customer need to come back with follow-up questions?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+
+      <div class="tab-panel" id="tab-daniel">
+        <div style="background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--color-text-warning);line-height:1.6">Daniel's role is Content Creator — he converts his weekly Tech Feedback Report entries into training scenarios that feed into agent sessions. This is his weekly 15–20 minute contribution, not a personal training session.</div>
+        <div class="section-head">Step 1 — convert this week's feedback entries</div>
+        <div class="prompt-box">Here are this week's feedback entries from my Tech Weekly Feedback Report. Please convert each one into a training resource for the relevant agent:
+
+[PASTE FEEDBACK ENTRIES HERE]
+
+For each entry:
+1. Identify which agent or topic it relates to
+2. If it is "Needs Correction" — write a scenario prompt the agent can use to practice the correct approach. Frame it as a real customer situation without mentioning it came from a mistake.
+3. If it is "Room to Grow" — write a slightly harder scenario that pushes them on the edge case they missed.
+4. If it is "Well Done" — write a quiz question that tests whether other agents know the same thing.
+5. Include the key takeaway as the learning objective for each scenario.
+
+Format the output as a clean document I can send to my manager to upload to the Claude Project.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Step 2 — flag patterns across entries</div>
+        <div class="prompt-box">Looking at the feedback entries I just shared, are there any topics appearing more than once — either this week or that I've mentioned before? If so, flag them as potential systemic issues worth escalating to the manager rather than treating as individual agent gaps.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Monthly — customer communication scenario (personal)</div>
+        <div class="prompt-box">I want to practice handling a frustrated customer whose ticket has been waiting on dev for several days. Roleplay as the customer — pick a realistic scenario where the customer is following up for the third time and is getting impatient or angry. I'll respond as the agent. After the scenario, give me feedback on: tone, how well I set expectations, whether I overpromised, and whether the customer would feel reassured.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">End of Q2 — team knowledge report</div>
+        <div class="prompt-box">I've been contributing weekly training scenarios all quarter based on my Tech Feedback Report entries. Here is a summary of the topics I flagged across Q2: [PASTE TOPICS / SCENARIO TITLES].
+
+Help me write a short "What the team learned this quarter" report (one page) covering: 1) the most common knowledge gaps that came up in reviews, 2) how those were addressed through training scenarios, 3) topics that improved based on fewer repeat corrections, 4) areas still worth monitoring in Q3. Write it in a format I can present at the last week huddle.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+
+      <div class="tab-panel" id="tab-reports">
+        <div class="section-head">Checkpoint 1 — after 3 sessions (early check-in)</div>
+        <div class="prompt-box">Here are my first training session notes:
+
+[PASTE SESSION NOTES]
+
+My focus area is: [FOCUS AREA]
+
+Write a short early check-in progress report (3–4 sentences) covering: 1) what I've covered so far, 2) what's clicking for me, 3) what still feels unclear. Write it in first person so I can share it with my manager.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Checkpoint 2 — mid-point (after ~6 sessions)</div>
+        <div class="prompt-box">Here are my training session notes so far:
+
+[PASTE SESSION NOTES]
+
+My focus area is: [FOCUS AREA]
+Real ticket I applied this training to: [TICKET ID / DESCRIPTION]
+
+Write a mid-point progress report (5–6 sentences) covering: 1) topics covered, 2) how my thinking has changed, 3) a real ticket where I applied this training and what I did differently, 4) what I still need to practice. Write it in first person.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Checkpoint 3 — end of focus area (proficiency declaration)</div>
+        <div class="prompt-box">Here are all my training session notes for this focus area:
+
+[PASTE ALL SESSION NOTES]
+
+My focus area was: [FOCUS AREA]
+Real tickets I applied this to: [TICKET IDs / DESCRIPTIONS]
+
+Write a final progress report (6–8 sentences) covering: 1) what I can now do that I couldn't before, 2) scenarios I feel confident handling, 3) a real ticket example showing the improvement, 4) what I'd still like to develop, 5) what I want to focus on next. Write it in first person so I can share it with my manager and at the team huddle.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+        <div class="divider"></div>
+        <div class="section-head">Manager huddle summary (generated automatically in Team overview)</div>
+        <div class="prompt-box">Use the "Generate progress report" button on each agent's card in the Team overview tab. It reads all their logged sessions and creates a manager-ready summary automatically.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="view" id="view-settings">
+    <div class="card">
+      <div class="card-title">Team docs</div>
+      <div id="doc-list"></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="new-doc" placeholder="Doc name, e.g. PAI gateway setup guide" style="margin:0;flex:1">
+        <button class="btn" onclick="addDoc()" style="white-space:nowrap">Add doc</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Agents</div>
+      <div id="agent-list-settings"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center">
+        <input type="text" id="new-agent-name" placeholder="Name" style="margin:0">
+        <select id="new-agent-team" style="margin:0">
+          <option value="PAI">PAI</option>
+          <option value="CF">CF</option>
+        </select>
+        <button class="btn" onclick="addAgent()">Add</button>
+      </div>
+      <div style="margin-top:10px">
+        <label>Focus area for new agent</label>
+        <input type="text" id="new-agent-focus" placeholder="e.g. PAI gateway troubleshooting">
+        <label>Training mode</label>
+        <select id="new-agent-mode" style="margin:0">
+          <option value="standard">Standard (gap-filling)</option>
+          <option value="foundation">Foundation (learning from scratch)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_AGENTS = [
+  {id:'dylan',name:'Dylan Cruz',team:'PAI',mode:'standard',focus:'PAI: Payout configuration — currency swaps, bank updates & communicating dev timelines\nCF: Anticipatory replies on billing tickets that close the loop without follow-ups\nSelf-identified: Current CF offers — 1CC Challenge, Single Product Payday, and all active promotions; customer service handling for each'},
+  {id:'edialys',name:'Edialys Brizuela',team:'PAI',mode:'standard',focus:'CF: Billing — duplicate charges, subscription plan structure, Classic vs CF2 account differences\nPAI: Login & 2FA auth flow; payout disputes on complex multi-product accounts\nSelf-identified: CF direct Stripe integration — how it works and switching between PAI and CF Stripe; funnel building from setup to full system'},
+  {id:'manuel',name:'Manuel Marcano',team:'PAI',mode:'standard',focus:'PAI: Gateway troubleshooting; account management; merchant vs merchant\'s customer routing; Masterborn vs #support-paymentsai escalation routing\nSelf-identified: CF billing — current offers, plans and pricing'},
+  {id:'karla',name:'Karla Durias',team:'CF',mode:'standard',focus:'CF: Technical funnel building — order forms, upsells, order bumps (CF2 & Classic)\nSelf-identified: PAI basics from a CF agent perspective — what PAI is, how it connects to CF, and when to hand off to the PAI team vs handle it yourself; CF course access and management'},
+  {id:'martin',name:'Martin Gamboa',team:'CF',mode:'foundation',focus:'CF tech foundations: page editor → funnel structure → domains → integrations → troubleshooting\nSelf-identified: PAI as it relates to CF — what PAI is, how it connects to CF funnels, basics of the PAI admin panel; CF opt-in pages and sales pages — building, configuring and troubleshooting'},
+  {id:'daniel',name:'Daniel Leos',team:'CF',mode:'standard',focus:'Content Creator role — converts weekly Tech Feedback Report entries into training scenarios for the team. Monthly personal focus: managing frustrated customers during long dev-dependent waits.'},
+  {id:'peter',name:'Peter D.',team:'CF',mode:'standard',focus:'CF: Account access — 2FA, login issues & account recovery steps\nSelf-identified: Course customization — dynamically replaced elements in both customized and non-customized themes'},
+  {id:'cris',name:'Cris Cacananta',team:'CF',mode:'standard',focus:'CF: Page editor, funnel settings & domain publishing — resolutions that stick first time\nSelf-identified: Workflows — how they function, particularly email send timing and delay issues'},
+];
+const DEFAULT_DOCS = [
+  'PAI gateway setup & troubleshooting','PAI login & 2FA flow','Masterborn vs support-paymentsai routing guide',
+  'CF billing & refund policy','CF cancellation verification process','CF course access (OFA, 1CC, FBC)',
+  'CF funnel builder — order forms & upsells','CF page editor & publishing','CF account access & 2FA recovery'
+];
+
+// Checkpoint definitions
+const CHECKPOINTS = [
+  {id:'cp1',sessions:3,label:'Early check-in',desc:'After 3 sessions — cover what\'s clicked and what\'s still unclear'},
+  {id:'cp2',sessions:6,label:'Mid-point review',desc:'After 6 sessions — reflect on how your thinking has changed and tie in a real ticket'},
+  {id:'cp3',sessions:10,label:'Proficiency declaration',desc:'After 10 sessions — declare what you can now do and share at the team huddle'},
+];
+
+let agents=[], docs=[], sessions=[], selectedTypes=[], selectedStar=0, selectedAgent=null;
+
+async function load(){
+  try{const ar=await window.storage.get('agents');agents=ar?JSON.parse(ar.value):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
+  catch{agents=JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
+  try{const dr=await window.storage.get('docs');docs=dr?JSON.parse(dr.value):[...DEFAULT_DOCS];}
+  catch{docs=[...DEFAULT_DOCS];}
+  try{const sr=await window.storage.get('sessions');sessions=sr?JSON.parse(sr.value):[];}
+  catch{sessions=[];}
+  renderAll();
+}
+
+async function save(){
+  await window.storage.set('agents',JSON.stringify(agents));
+  await window.storage.set('docs',JSON.stringify(docs));
+  await window.storage.set('sessions',JSON.stringify(sessions));
+}
+
+function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function agentSessions(id){return sessions.filter(s=>s.agentId===id);}
+
+function cpStatus(agentId){
+  const count=agentSessions(agentId).length;
+  return CHECKPOINTS.map(cp=>{
+    const done=(agentSessions(agentId).find(s=>s.checkpointReports&&s.checkpointReports[cp.id]))?true:false;
+    const due=count>=cp.sessions&&!done;
+    return{...cp,done,due,locked:count<cp.sessions};
+  });
+}
+
+function renderAll(){renderTeam();renderLogForm();renderSettings();renderManagerTable();renderImprovements();}
+
+function renderTeam(){
+  const grid=document.getElementById('agent-grid');
+  grid.innerHTML=agents.map(a=>{
+    const ss=agentSessions(a.id);
+    const pct=Math.min(100,Math.round(ss.length/12*100));
+    const cps=cpStatus(a.id);
+    const dots=cps.map(cp=>`<div class="cp-dot${cp.done?' done':cp.due?' due':''}" title="${cp.label}: ${cp.done?'complete':cp.due?'ready to generate':'locked'}"></div>`).join('');
+    return `<div class="agent-card${selectedAgent===a.id?' selected':''}" onclick="selectAgent('${a.id}')">
+      <div class="avatar ${a.team==='PAI'?'av-pai':'av-cf'}">${initials(a.name)}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+        <div class="agent-name">${a.name}</div>
+        ${a.mode==='foundation'?'<span class="martin-badge">foundations</span>':''}
+      </div>
+      <span class="agent-team ${a.team==='PAI'?'team-pai':'team-cf'}">${a.team}</span>
+      <div class="agent-focus" style="max-height:52px;overflow:hidden">${(a.focus||'<span style="color:var(--color-text-tertiary);font-style:italic">No focus set</span>').split('\n')[0]}</div>
+      <div class="agent-sessions">${ss.length} session${ss.length!==1?'s':''} logged</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="checkpoint-dots">${dots}</div>
+    </div>`;
+  }).join('');
+  renderDetail();
+}
+
+function selectAgent(id){
+  selectedAgent=selectedAgent===id?null:id;
+  renderTeam();
+}
+
+function renderDetail(){
+  const el=document.getElementById('team-detail');
+  if(!selectedAgent){el.innerHTML='';return;}
+  const a=agents.find(x=>x.id===selectedAgent);
+  const ss=agentSessions(a.id);
+  const types={quiz:0,scenario:0,explainer:0,foundation:0};
+  ss.forEach(s=>s.types.forEach(t=>{if(types[t]!==undefined)types[t]++;}));
+  const avgConf=ss.length?Math.round(ss.reduce((s,x)=>s+(x.stars||0),0)/ss.length*10)/10:0;
+  const cps=cpStatus(a.id);
+
+  const checkpointHtml=cps.map(cp=>{
+    const statusClass=cp.done?'done':cp.due?'ready':'locked';
+    const statusLabel=cp.done?'Complete':cp.due?'Ready to generate':'Locked';
+    const existingReport=ss.find(s=>s.checkpointReports&&s.checkpointReports[cp.id]);
+    return `<div class="checkpoint-card ${cp.done?'completed':cp.due?'unlocked':'locked'}">
+      <div class="cp-header">
+        <div class="cp-title">${cp.label} <span style="font-size:11px;color:var(--color-text-tertiary);font-weight:400">— after ${cp.sessions} sessions</span></div>
+        <span class="cp-status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="cp-desc">${cp.desc}</div>
+      ${!cp.locked?`<div class="btn-row">
+        <button class="btn ${cp.done?'':'btn-warning'}" onclick="generateCheckpoint('${a.id}','${cp.id}')" id="cp-btn-${a.id}-${cp.id}">${cp.done?'Regenerate':'Generate report'}</button>
+      </div>
+      <div id="cp-out-${a.id}-${cp.id}" class="cp-output">${existingReport?`<div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:6px">Last generated ${existingReport.date}</div><div class="summary-box">${existingReport.checkpointReports[cp.id]}</div>`:''}
+      </div>`:''}
+    </div>`;
+  }).join('');
+
+  const ticketMentions=ss.filter(s=>s.ticket&&s.ticket.trim()).slice(-5);
+
+  el.innerHTML=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:16px;font-weight:500">${a.name}</div>
+        ${a.mode==='foundation'?'<span class="martin-badge">foundation learner</span>':''}
+      </div>
+      <button class="btn" onclick="generateSummary('${a.id}')" id="sum-btn-${a.id}">Generate huddle summary</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="margin-bottom:4px">Focus area</label>
+      <textarea id="focus-${a.id}" style="min-height:60px;margin-bottom:8px">${a.focus||''}</textarea>
+      <div class="btn-row"><button class="btn" onclick="saveFocus('${a.id}')">Save focus</button></div>
+    </div>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val">${ss.length}</div><div class="metric-lbl">Sessions</div></div>
+      <div class="metric"><div class="metric-val">${avgConf||'—'}</div><div class="metric-lbl">Avg confidence</div></div>
+      <div class="metric"><div class="metric-val">${[...new Set(ss.map(s=>s.topic).filter(Boolean))].length}</div><div class="metric-lbl">Topics covered</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <span class="type-badge tb-quiz">Quiz ×${types.quiz}</span>
+      <span class="type-badge tb-scenario">Scenario ×${types.scenario}</span>
+      <span class="type-badge tb-explainer">Explainer ×${types.explainer}</span>
+      ${a.mode==='foundation'?`<span class="type-badge tb-foundation">Foundation ×${types.foundation}</span>`:''}
+    </div>
+    ${ticketMentions.length?`<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px">Real tickets applied: ${ticketMentions.map(s=>`<span style="color:var(--color-text-info)">${s.ticket}</span>`).join(', ')}</div>`:''}
+    <div id="sum-output-${a.id}"></div>
+
+    <div class="divider"></div>
+    <div class="section-head">Progress checkpoints</div>
+    <div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:12px">
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-text-success);display:inline-block"></span> Complete</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-text-warning);display:inline-block"></span> Ready to generate</span>
+      <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);display:inline-block"></span> Locked</span>
+    </div>
+    <div class="checkpoint-section">${checkpointHtml}</div>
+
+    <div class="divider"></div>
+    <div class="section-head">Recent sessions</div>
+    ${ss.length===0?`<div class="empty">No sessions yet</div>`:ss.slice().reverse().slice(0,8).map(s=>`
+      <div class="session-item">
+        <div class="session-header">
+          <span class="session-date">${s.date}</span>
+          <div class="session-types">${s.types.map(t=>`<span class="type-badge tb-${t}">${t}</span>`).join('')}</div>
+        </div>
+        ${s.topic?`<div style="font-size:13px;font-weight:500;margin-bottom:2px">${s.topic}</div>`:''}
+        ${s.notes?`<div class="session-note">${s.notes}</div>`:''}
+        ${s.ticket?`<div class="session-ticket">Ticket applied: ${s.ticket}</div>`:''}
+        ${s.stars?`<div class="session-rating">${'★'.repeat(s.stars)}${'☆'.repeat(5-s.stars)} confidence</div>`:''}
+      </div>`).join('')}
+  </div>`;
+}
+
+async function saveFocus(id){
+  const a=agents.find(x=>x.id===id);
+  a.focus=document.getElementById('focus-'+id).value;
+  await save();renderTeam();
+}
+
+async function generateCheckpoint(agentId, cpId){
+  const a=agents.find(x=>x.id===agentId);
+  const ss=agentSessions(agentId);
+  const cp=CHECKPOINTS.find(c=>c.id===cpId);
+  const btn=document.getElementById(`cp-btn-${agentId}-${cpId}`);
+  const out=document.getElementById(`cp-out-${agentId}-${cpId}`);
+  btn.innerHTML=`<span class="spinner"></span>Generating...`;btn.disabled=true;
+
+  const notes=ss.map((s,i)=>`Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Real ticket applied: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('\n');
+  const isFoundation=a.mode==='foundation';
+
+  const prompts={
+    cp1:`Agent ${a.name} has completed their first 3 training sessions. ${isFoundation?'They are building a foundation in CF technical support from scratch.':'Their focus area is: '+a.focus+'.'}\n\nSession logs:\n${notes}\n\nWrite a short early check-in progress report in first person (3–4 sentences) for ${a.name} to share with their manager. Cover: 1) what they've explored so far, 2) what is clicking, 3) what still feels unclear or needs more practice. Be specific and encouraging.`,
+    cp2:`Agent ${a.name} has completed 6+ training sessions. ${isFoundation?'They are building a foundation in CF technical support from scratch.':'Their focus area is: '+a.focus+'.'}\n\nSession logs:\n${notes}\n\nWrite a mid-point progress report in first person (5–6 sentences) for ${a.name} to share with their manager. Cover: 1) topics covered, 2) how their thinking or approach has changed, 3) a real ticket they applied this to (if logged), 4) what still needs practice. Be specific.`,
+    cp3:`Agent ${a.name} has completed 10+ training sessions. ${isFoundation?'They are building a foundation in CF technical support from scratch.':'Their focus area is: '+a.focus+'.'}\n\nSession logs:\n${notes}\n\nWrite a final proficiency report in first person (6–8 sentences) for ${a.name} to share at the team huddle. Cover: 1) what they can now confidently handle that they couldn't before, 2) specific scenarios they feel ready for, 3) a real example showing improvement (if logged), 4) any remaining gaps, 5) what they want to focus on next. This is their Q2 achievement statement — make it proud but accurate.`
+  };
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompts[cpId]}]})});
+    const data=await resp.json();
+    const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Could not generate report.';
+
+    // Store on a session record
+    let cpSession=ss.find(s=>s.checkpointReports);
+    if(!cpSession){
+      cpSession={id:'cp-'+Date.now(),agentId,types:[],topic:'Checkpoint report',notes:'',stars:0,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),checkpointReports:{}};
+      sessions.push(cpSession);
+    }
+    if(!cpSession.checkpointReports)cpSession.checkpointReports={};
+    cpSession.checkpointReports[cpId]=text;
+    cpSession.date=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    await save();
+
+    out.innerHTML=`<div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:6px">Generated ${cpSession.date}</div><div class="summary-box">${text}</div>`;
+    btn.innerHTML=cp.done?'Regenerate':'Generate report';btn.disabled=false;
+    renderTeam();
+  }catch(e){
+    out.innerHTML=`<div class="summary-box">Error generating report. Try again.</div>`;
+    btn.innerHTML='Generate report';btn.disabled=false;
+  }
+}
+
+async function generateSummary(id){
+  const a=agents.find(x=>x.id===id);
+  const ss=agentSessions(a.id).filter(s=>!s.checkpointReports);
+  const btn=document.getElementById('sum-btn-'+id);
+  const out=document.getElementById('sum-output-'+id);
+  if(!ss.length){out.innerHTML=`<div class="summary-box">No sessions logged yet — add some sessions first.</div>`;return;}
+  btn.innerHTML=`<span class="spinner"></span>Generating...`;btn.disabled=true;
+
+  const notes=ss.map((s,i)=>`Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Ticket applied: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('\n');
+  const isFoundation=a.mode==='foundation';
+  const prompt=`You are helping a support team manager review agent training progress for a team bi-weekly huddle. Here are ${a.name}'s training session logs:\n\n${notes}\n\n${isFoundation?'Note: '+a.name+' is building a foundation in CF technical support from scratch — this is a role expansion, not a gap-filling exercise.':'Focus area: '+a.focus+'.'}\n\nWrite a concise bi-weekly progress summary (5–7 sentences) in third person for the manager to share at the huddle. Cover: 1) topics covered, 2) confidence trend, 3) a strength shown, 4) what still needs work, 5) recommended focus for the next two weeks. Be specific, encouraging, and manager-ready.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await resp.json();
+    const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Could not generate summary.';
+    out.innerHTML=`<div style="margin-bottom:16px"><div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:6px">Bi-weekly huddle summary — ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div><div class="summary-box">${text}</div></div>`;
+  }catch(e){
+    out.innerHTML=`<div class="summary-box">Error generating summary. Try again.</div>`;
+  }
+  btn.innerHTML='Generate huddle summary';btn.disabled=false;
+}
+
+function updateSessionTypes(){
+  const agentId=document.getElementById('log-agent').value;
+  const a=agents.find(x=>x.id===agentId);
+  const container=document.getElementById('type-pills-container');
+  const foundationPill=container.querySelector('[data-type="foundation"]');
+  if(a&&a.mode==='foundation'){
+    if(!foundationPill){
+      const btn=document.createElement('button');
+      btn.className='type-pill';btn.setAttribute('data-type','foundation');
+      btn.textContent='Foundation';
+      btn.onclick=function(){toggleType('foundation',this);};
+      container.appendChild(btn);
+    }
+  }else{
+    if(foundationPill){foundationPill.remove();selectedTypes=selectedTypes.filter(t=>t!=='foundation');}
+  }
+}
+
+function renderLogForm(){
+  const sel=document.getElementById('log-agent');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML=agents.map(a=>`<option value="${a.id}">${a.name} (${a.team})</option>`).join('');
+  if(cur)sel.value=cur;
+  updateSessionTypes();
+}
+
+function toggleType(type,el){
+  const idx=selectedTypes.indexOf(type);
+  if(idx>-1){selectedTypes.splice(idx,1);el.className='type-pill';}
+  else{selectedTypes.push(type);el.className=`type-pill selected-${type}`;}
+}
+
+function setStar(n){
+  selectedStar=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.className='star'+(i<n?' lit':''));
+}
+
+async function saveSession(){
+  const agentId=document.getElementById('log-agent').value;
+  const topic=document.getElementById('log-topic').value.trim();
+  const notes=document.getElementById('log-notes').value.trim();
+  const ticket=document.getElementById('log-ticket').value.trim();
+  if(!agentId||selectedTypes.length===0){document.getElementById('log-msg').textContent='Select an agent and at least one session type.';return;}
+  const s={id:Date.now().toString(),agentId,types:[...selectedTypes],topic,notes,ticket,stars:selectedStar,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+  sessions.push(s);
+  await save();
+
+  // Check if a checkpoint is now due
+  const count=agentSessions(agentId).filter(x=>!x.checkpointReports).length;
+  const cp=CHECKPOINTS.find(c=>c.sessions===count);
+  const msg=cp?`Session saved! ✓ Checkpoint ready: "${cp.label}" — open Team overview to generate it.`:'Session saved!';
+  document.getElementById('log-msg').textContent=msg;
+  setTimeout(()=>{document.getElementById('log-msg').textContent='';},4000);
+  clearLog(true);renderTeam();
+}
+
+function clearLog(keepAgent){
+  document.getElementById('log-topic').value='';
+  document.getElementById('log-notes').value='';
+  document.getElementById('log-ticket').value='';
+  selectedTypes=[];selectedStar=0;
+  document.querySelectorAll('.type-pill').forEach(p=>{p.className='type-pill';});
+  document.querySelectorAll('.star').forEach(s=>s.className='star');
+}
+
+function renderSettings(){
+  const dl=document.getElementById('doc-list');
+  if(dl)dl.innerHTML=docs.length===0?`<div class="empty" style="padding:12px 0">No docs added yet</div>`:docs.map((d,i)=>`<div class="doc-row"><span class="doc-name">${d}</span><button class="doc-remove" onclick="removeDoc(${i})">Remove</button></div>`).join('');
+  const al=document.getElementById('agent-list-settings');
+  if(al)al.innerHTML=agents.map(a=>`<div class="doc-row"><span class="doc-name">${a.name} <span style="font-size:11px;color:var(--color-text-tertiary)">(${a.team}${a.mode==='foundation'?' · foundations':''})</span></span><button class="doc-remove" onclick="removeAgent('${a.id}')">Remove</button></div>`).join('');
+}
+
+async function addDoc(){
+  const v=document.getElementById('new-doc').value.trim();if(!v)return;
+  docs.push(v);document.getElementById('new-doc').value='';
+  await save();renderSettings();
+}
+
+async function removeDoc(i){docs.splice(i,1);await save();renderSettings();}
+
+async function addAgent(){
+  const name=document.getElementById('new-agent-name').value.trim();
+  const team=document.getElementById('new-agent-team').value;
+  const focus=document.getElementById('new-agent-focus').value.trim();
+  const mode=document.getElementById('new-agent-mode').value;
+  if(!name)return;
+  agents.push({id:name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now(),name,team,focus,mode});
+  document.getElementById('new-agent-name').value='';
+  document.getElementById('new-agent-focus').value='';
+  await save();renderAll();
+}
+
+async function removeAgent(id){
+  agents=agents.filter(a=>a.id!==id);
+  sessions=sessions.filter(s=>s.agentId!==id);
+  await save();renderAll();
+}
+
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  event.target.classList.add('active');
+  if(v==='settings')renderSettings();
+  if(v==='manager'){renderManagerTable();renderImprovements();}
+}
+
+function showTab(tabId, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyPrompt(btn){
+  const box=btn.parentElement;
+  const text=box.textContent.replace('Copy','').trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';setTimeout(()=>{btn.textContent='Copy';},1500);
+  });
+}
+
+async function renderManagerTable(){
+  const tbody = document.getElementById('mgr-table-body');
+  if(!tbody) return;
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  tbody.innerHTML = agents.map(a => {
+    const ss = agentSessions(a.id).filter(s => !s.checkpointReports);
+    const recentSessions = ss.filter(s => {
+      const d = new Date(s.date);
+      return (now - d.getTime()) < oneWeek;
+    });
+    const pulses = ss.filter(s => s.types && s.types.includes('pulse'));
+    const recentPulse = pulses.filter(s => (now - new Date(s.date).getTime()) < oneWeek);
+    const avgConf = ss.length ? Math.round(ss.reduce((t,x) => t+(x.stars||0),0)/ss.length*10)/10 : 0;
+    const cps = cpStatus(a.id);
+    const cpDone = cps.filter(c => c.done).length;
+    const cpDue = cps.filter(c => c.due).length;
+    const statusClass = ss.length === 0 ? 'status-off' : recentSessions.length > 0 ? 'status-on' : 'status-warn';
+    const statusTitle = ss.length === 0 ? 'Not started' : recentSessions.length > 0 ? 'On track' : 'No session this week';
+    const pulseHtml = recentPulse.length > 0
+      ? '<span class="pulse-badge pulse-done">Done this week</span>'
+      : pulses.length > 0
+        ? '<span class="pulse-badge pulse-miss">Missed this week</span>'
+        : '<span class="pulse-badge pulse-none">None yet</span>';
+    const cpHtml = cps.map(cp =>
+      `<span class="cp-dot ${cp.done?'done':cp.due?'due':''}" title="${cp.label}: ${cp.done?'complete':cp.due?'ready':'locked'}"></span>`
+    ).join('');
+    const confHtml = avgConf
+      ? `<div class="conf-bar"><div class="conf-fill" style="width:${avgConf/5*100}%"></div></div>${avgConf}/5`
+      : '<span style="color:var(--color-text-tertiary)">—</span>';
+    return `<tr>
+      <td style="font-weight:500">${a.name}${a.mode==='foundation'?'<span class="martin-badge" style="margin-left:6px">foundations</span>':''}</td>
+      <td><span class="agent-team ${a.team==='PAI'?'team-pai':'team-cf'}">${a.team}</span></td>
+      <td style="font-size:13px;font-weight:500">${ss.length}</td>
+      <td>${confHtml}</td>
+      <td><div style="display:flex;gap:3px;align-items:center">${cpHtml}<span style="font-size:11px;color:var(--color-text-tertiary);margin-left:4px">${cpDone}/3${cpDue?' <span style=color:var(--color-text-warning)>('+cpDue+' ready)</span>':''}</span></div></td>
+      <td style="font-size:13px">${recentSessions.length} session${recentSessions.length!==1?'s':''}</td>
+      <td>${pulseHtml}</td>
+      <td><span class="status-dot ${statusClass}" title="${statusTitle}"></span><span style="font-size:12px;color:var(--color-text-secondary)">${statusTitle}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+async function generateAllSummaries(){
+  const btn = document.getElementById('gen-all-btn');
+  const out = document.getElementById('all-summaries-output');
+  btn.innerHTML = '<span class="spinner"></span>Generating...'; btn.disabled = true;
+  out.innerHTML = '';
+  const results = [];
+  for(const a of agents){
+    const ss = agentSessions(a.id).filter(s => !s.checkpointReports);
+    if(!ss.length){ results.push({name:a.name,text:'No sessions logged yet.'}); continue; }
+    const notes = ss.map((s,i) => `Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Ticket: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('
+');
+    const pulses = ss.filter(s => s.types && s.types.includes('pulse'));
+    const pulseText = pulses.length ? '
+
+Pattern Pulse observations:
+' + pulses.map(p => `- ${p.notes}`).join('
+') : '';
+    try{
+      const resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:`Write a concise bi-weekly training progress summary for ${a.name} (3–4 sentences, third person, manager-ready). Focus area: ${a.focus||'not set'}. ${a.mode==='foundation'?'Note: building CF tech support foundations from scratch.':''}
+
+Session logs:
+${notes}${pulseText}
+
+Cover: sessions completed, confidence trend, one strength, one area still developing. Be specific.`}]})});
+      const data = await resp.json();
+      results.push({name:a.name,text:data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'Error.'});
+    }catch(e){ results.push({name:a.name,text:'Error generating summary.'}); }
+  }
+  const date = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  out.innerHTML = `<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="font-size:14px;font-weight:500">Bi-weekly report — ${date}</div><button class="btn" onclick="copyAllSummaries()">Copy all</button></div><div id="all-sum-text">${results.map(r=>`<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:500;margin-bottom:4px;color:var(--color-text-primary)">${r.name}</div><div class="summary-box" style="font-size:12px">${r.text}</div></div>`).join('')}</div></div>`;
+  btn.innerHTML='Generate bi-weekly report'; btn.disabled=false;
+}
+
+function copyAllSummaries(){
+  const el = document.getElementById('all-sum-text');
+  if(!el) return;
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target; btn.textContent='Copied!';
+    setTimeout(()=>{ btn.textContent='Copy all'; },1500);
+  });
+}
+
+async function loadImprovements(){
+  try{ const r = await window.storage.get('improvements'); return r?JSON.parse(r.value):[]; }
+  catch{ return []; }
+}
+
+async function renderImprovements(){
+  const items = await loadImprovements();
+  const el = document.getElementById('improvements-list');
+  if(!el) return;
+  const target = 5;
+  const pct = Math.min(100, Math.round(items.length/target*100));
+  el.innerHTML = `<div style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:12px;color:var(--color-text-secondary)">${items.length} of ${target} improvements documented</span>
+      <span style="font-size:12px;font-weight:500;color:${items.length>=target?'var(--color-text-success)':'var(--color-text-primary)'}">${items.length>=target?'Goal reached!':target-items.length+' remaining'}</span>
+    </div>
+    <div class="progress-bar" style="height:6px"><div class="progress-fill" style="width:${pct}%;background:${items.length>=target?'var(--color-text-success)':'var(--color-border-info)'}"></div></div>
+  </div>` +
+  (items.length===0?'<div class="empty">No improvements logged yet — add your first insight from the bi-weekly report</div>':
+  items.map((item,i)=>`<div class="improvement-item">
+    <div class="improvement-num">${i+1}</div>
+    <div style="flex:1">
+      <div class="improvement-text">${item.text}</div>
+      <div class="improvement-date">${item.date}${item.source?' · From: '+item.source:''}</div>
+    </div>
+    <button class="doc-remove" onclick="removeImprovement(${i})">Remove</button>
+  </div>`).join(''));
+}
+
+async function addImprovement(){
+  const text = document.getElementById('new-improvement').value.trim();
+  if(!text) return;
+  const items = await loadImprovements();
+  items.push({text, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), source:'Bi-weekly summary'});
+  await window.storage.set('improvements', JSON.stringify(items));
+  document.getElementById('new-improvement').value='';
+  document.getElementById('imp-msg').textContent='Improvement logged!';
+  setTimeout(()=>{ document.getElementById('imp-msg').textContent=''; },2000);
+  renderImprovements();
+}
+
+async function removeImprovement(i){
+  const items = await loadImprovements();
+  items.splice(i,1);
+  await window.storage.set('improvements', JSON.stringify(items));
+  renderImprovements();
+}
+
+
+load();
+</script>
+
+
+</body></html>
