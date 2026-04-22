@@ -441,11 +441,11 @@ const CHECKPOINTS = [
 let agents=[], docs=[], sessions=[], selectedTypes=[], selectedStar=0, selectedAgent=null;
 
 function load(){
-  try{const ar=({value: localStorage.getItem('agents')});agents=ar?JSON.parse(ar.value):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
+  try{const ar=localStorage.getItem('agents');agents=ar?JSON.parse(ar):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
   catch{agents=JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
-  try{const dr=({value: localStorage.getItem('docs')});docs=dr?JSON.parse(dr.value):[...DEFAULT_DOCS];}
+  try{const dr=localStorage.getItem('docs');docs=dr?JSON.parse(dr):[...DEFAULT_DOCS];}
   catch{docs=[...DEFAULT_DOCS];}
-  try{const sr=({value: localStorage.getItem('sessions')});sessions=sr?JSON.parse(sr.value):[];}
+  try{const sr=localStorage.getItem('sessions');sessions=sr?JSON.parse(sr):[];}
   catch{sessions=[];}
   renderAll();
 }
@@ -856,7 +856,7 @@ function copyAllSummaries(){
 }
 
 function loadImprovements(){
-  try{ const r = ({value: localStorage.getItem('improvements')}); return r?JSON.parse(r.value):[]; }
+  try{ const r = localStorage.getItem('improvements'); return r?JSON.parse(r):[]; }
   catch{ return []; }
 }
 
