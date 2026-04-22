@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///Users/michellelasalle/Downloads/index_2.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html>
+<head>
+<meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
@@ -137,11 +137,11 @@ textarea{resize:vertical;min-height:80px}
 <body>
 <div class="app">
   <div class="nav">
-    <button class="nav-btn active" onclick="showView(&#39;team&#39;)">Team overview</button>
-    <button class="nav-btn" onclick="showView(&#39;manager&#39;)">Manager dashboard</button>
-    <button class="nav-btn" onclick="showView(&#39;log&#39;)">Log a session</button>
-    <button class="nav-btn" onclick="showView(&#39;prompts&#39;)">Prompt library</button>
-    <button class="nav-btn" onclick="showView(&#39;settings&#39;)">Docs &amp; agents</button>
+    <button class="nav-btn active" onclick="showView('team')">Team overview</button>
+    <button class="nav-btn" onclick="showView('manager')">Manager dashboard</button>
+    <button class="nav-btn" onclick="showView('log')">Log a session</button>
+    <button class="nav-btn" onclick="showView('prompts')">Prompt library</button>
+    <button class="nav-btn" onclick="showView('settings')">Docs & agents</button>
   </div>
 
   <!-- TEAM OVERVIEW -->
@@ -197,9 +197,9 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <label>Session type (select all that apply)</label>
       <div class="type-pills" id="type-pills-container">
-        <button class="type-pill" onclick="toggleType(&#39;quiz&#39;,this)">Quiz</button>
-        <button class="type-pill" onclick="toggleType(&#39;scenario&#39;,this)">Scenario</button>
-        <button class="type-pill" onclick="toggleType(&#39;explainer&#39;,this)">Concept explainer</button>
+        <button class="type-pill" onclick="toggleType('quiz',this)">Quiz</button>
+        <button class="type-pill" onclick="toggleType('scenario',this)">Scenario</button>
+        <button class="type-pill" onclick="toggleType('explainer',this)">Concept explainer</button>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
@@ -227,12 +227,12 @@ textarea{resize:vertical;min-height:80px}
   <div class="view" id="view-prompts">
     <div class="card">
       <div class="tab-row">
-        <button class="tab-btn active" onclick="showTab(&#39;tab-general&#39;, this)">General</button>
-        <button class="tab-btn" onclick="showTab(&#39;tab-pai&#39;, this)">PAI agents</button>
-        <button class="tab-btn" onclick="showTab(&#39;tab-cf&#39;, this)">CF agents</button>
-        <button class="tab-btn" onclick="showTab(&#39;tab-martin&#39;, this)">Martin — tech foundations</button>
-        <button class="tab-btn" onclick="showTab(&#39;tab-reports&#39;, this)">Progress reports</button>
-        <button class="tab-btn" onclick="showTab(&#39;tab-daniel&#39;, this)">Daniel — weekly contribution</button>
+        <button class="tab-btn active" onclick="showTab('tab-general', this)">General</button>
+        <button class="tab-btn" onclick="showTab('tab-pai', this)">PAI agents</button>
+        <button class="tab-btn" onclick="showTab('tab-cf', this)">CF agents</button>
+        <button class="tab-btn" onclick="showTab('tab-martin', this)">Martin — tech foundations</button>
+        <button class="tab-btn" onclick="showTab('tab-reports', this)">Progress reports</button>
+        <button class="tab-btn" onclick="showTab('tab-daniel', this)">Daniel — weekly contribution</button>
       </div>
 
       <div class="tab-panel active" id="tab-general">
@@ -257,7 +257,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="section-head">Merchant vs merchant's customer (Manuel)</div>
         <div class="prompt-box">Explain the difference between a PAI merchant contacting support and a merchant's end customer contacting support. Give me 3 examples of each, and for each example tell me what the correct resolution path is and what PAI can and can't do.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
-        <div class="section-head">PAI login &amp; 2FA (Edialys)</div>
+        <div class="section-head">PAI login & 2FA (Edialys)</div>
         <div class="prompt-box">Explain how PAI's login and 2FA flow differs from ClickFunnels. What are the most common failure points, what can the agent resolve, and when does it need to be escalated to Masterborn?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="prompt-box">A merchant can't log in — they're not receiving their verification code. Give me a step-by-step troubleshooting guide. At each step, tell me what I'm checking for and what the next step is if it doesn't resolve.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
@@ -274,7 +274,7 @@ textarea{resize:vertical;min-height:80px}
 9. Merchant wants to change their business type from company to sole proprietor
 10. Merchant's customer is disputing a charge — merchant already submitted a refund<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
-        <div class="section-head">Payout disputes &amp; currency (Dylan / Edialys)</div>
+        <div class="section-head">Payout disputes & currency (Dylan / Edialys)</div>
         <div class="prompt-box">A merchant contacts PAI — their payout has been blocked for several days. Walk me through: what do I check first, how do I explain the reason to the merchant clearly, what can I resolve myself, and when do I need to loop in the team?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
       </div>
 
@@ -283,13 +283,13 @@ textarea{resize:vertical;min-height:80px}
         <div class="prompt-box">Explain how to set up a 2-step order form with an order bump and an upsell in ClickFunnels 2.0. Walk me through the steps in order. After the explanation, quiz me with 3 questions about where things commonly go wrong.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="prompt-box">What are the key differences between how order bumps and upsells work in CF Classic vs CF2? Give me a scenario where a customer is confused about why their order bump isn't showing, and help me diagnose it.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
-        <div class="section-head">Course access &amp; challenges (Martin)</div>
+        <div class="section-head">Course access & challenges (Martin)</div>
         <div class="prompt-box">Quiz me on how course access works in ClickFunnels — specifically OFA, the 1CC challenge, and Funnel Builder Certification. Cover: how access is granted, common reasons it fails, and what support can and can't do.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
-        <div class="section-head">Account access &amp; 2FA (Peter)</div>
+        <div class="section-head">Account access & 2FA (Peter)</div>
         <div class="prompt-box">A customer can't log in — they've lost access to their 2FA authenticator app. Walk me through every step of the account recovery process. Tell me what I can do, what requires escalation, and what information I need to collect to verify the account.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
-        <div class="section-head">Page editor &amp; publishing (Cris)</div>
+        <div class="section-head">Page editor & publishing (Cris)</div>
         <div class="prompt-box">A customer says their page looks fine in the editor but is broken when published. What are the most common causes of this, and how do I diagnose them step by step? After explaining, give me a scenario to work through.<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="prompt-box">Explain how domain connection and publishing work in CF2. What are the most common points of failure and what does each error message mean?<button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div>
         <div class="divider"></div>
@@ -440,20 +440,20 @@ const CHECKPOINTS = [
 
 let agents=[], docs=[], sessions=[], selectedTypes=[], selectedStar=0, selectedAgent=null;
 
-async function load(){
-  try{const ar=await window.storage.get('agents');agents=ar?JSON.parse(ar.value):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
+function load(){
+  try{const ar=({value: localStorage.getItem('agents')});agents=ar?JSON.parse(ar.value):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
   catch{agents=JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
-  try{const dr=await window.storage.get('docs');docs=dr?JSON.parse(dr.value):[...DEFAULT_DOCS];}
+  try{const dr=({value: localStorage.getItem('docs')});docs=dr?JSON.parse(dr.value):[...DEFAULT_DOCS];}
   catch{docs=[...DEFAULT_DOCS];}
-  try{const sr=await window.storage.get('sessions');sessions=sr?JSON.parse(sr.value):[];}
+  try{const sr=({value: localStorage.getItem('sessions')});sessions=sr?JSON.parse(sr.value):[];}
   catch{sessions=[];}
   renderAll();
 }
 
-async function save(){
-  await window.storage.set('agents',JSON.stringify(agents));
-  await window.storage.set('docs',JSON.stringify(docs));
-  await window.storage.set('sessions',JSON.stringify(sessions));
+function save(){
+  localStorage.setItem('agents',JSON.stringify(agents));
+  localStorage.setItem('docs',JSON.stringify(docs));
+  localStorage.setItem('sessions',JSON.stringify(sessions));
 }
 
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
@@ -583,7 +583,7 @@ function renderDetail(){
 async function saveFocus(id){
   const a=agents.find(x=>x.id===id);
   a.focus=document.getElementById('focus-'+id).value;
-  await save();renderTeam();
+  save();renderTeam();
 }
 
 async function generateCheckpoint(agentId, cpId){
@@ -617,7 +617,7 @@ async function generateCheckpoint(agentId, cpId){
     if(!cpSession.checkpointReports)cpSession.checkpointReports={};
     cpSession.checkpointReports[cpId]=text;
     cpSession.date=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    await save();
+    save();
 
     out.innerHTML=`<div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:6px">Generated ${cpSession.date}</div><div class="summary-box">${text}</div>`;
     btn.innerHTML=cp.done?'Regenerate':'Generate report';btn.disabled=false;
@@ -697,7 +697,7 @@ async function saveSession(){
   if(!agentId||selectedTypes.length===0){document.getElementById('log-msg').textContent='Select an agent and at least one session type.';return;}
   const s={id:Date.now().toString(),agentId,types:[...selectedTypes],topic,notes,ticket,stars:selectedStar,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
   sessions.push(s);
-  await save();
+  save();
 
   // Check if a checkpoint is now due
   const count=agentSessions(agentId).filter(x=>!x.checkpointReports).length;
@@ -727,10 +727,10 @@ function renderSettings(){
 async function addDoc(){
   const v=document.getElementById('new-doc').value.trim();if(!v)return;
   docs.push(v);document.getElementById('new-doc').value='';
-  await save();renderSettings();
+  save();renderSettings();
 }
 
-async function removeDoc(i){docs.splice(i,1);await save();renderSettings();}
+async function removeDoc(i){docs.splice(i,1);save();renderSettings();}
 
 async function addAgent(){
   const name=document.getElementById('new-agent-name').value.trim();
@@ -741,13 +741,13 @@ async function addAgent(){
   agents.push({id:name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now(),name,team,focus,mode});
   document.getElementById('new-agent-name').value='';
   document.getElementById('new-agent-focus').value='';
-  await save();renderAll();
+  save();renderAll();
 }
 
 async function removeAgent(id){
   agents=agents.filter(a=>a.id!==id);
   sessions=sessions.filter(s=>s.agentId!==id);
-  await save();renderAll();
+  save();renderAll();
 }
 
 function showView(v){
@@ -826,14 +826,9 @@ async function generateAllSummaries(){
   for(const a of agents){
     const ss = agentSessions(a.id).filter(s => !s.checkpointReports);
     if(!ss.length){ results.push({name:a.name,text:'No sessions logged yet.'}); continue; }
-    const notes = ss.map((s,i) => `Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Ticket: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('
-');
+    const notes = ss.map((s,i) => `Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Ticket: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('\\n');
     const pulses = ss.filter(s => s.types && s.types.includes('pulse'));
-    const pulseText = pulses.length ? '
-
-Pattern Pulse observations:
-' + pulses.map(p => `- ${p.notes}`).join('
-') : '';
+    const pulseText = pulses.length ? '\\n\\nPattern Pulse observations:\\n' + pulses.map(p => `- ${p.notes}`).join('\\n') : '';
     try{
       const resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:`Write a concise bi-weekly training progress summary for ${a.name} (3–4 sentences, third person, manager-ready). Focus area: ${a.focus||'not set'}. ${a.mode==='foundation'?'Note: building CF tech support foundations from scratch.':''}
 
@@ -860,13 +855,13 @@ function copyAllSummaries(){
   });
 }
 
-async function loadImprovements(){
-  try{ const r = await window.storage.get('improvements'); return r?JSON.parse(r.value):[]; }
+function loadImprovements(){
+  try{ const r = ({value: localStorage.getItem('improvements')}); return r?JSON.parse(r.value):[]; }
   catch{ return []; }
 }
 
-async function renderImprovements(){
-  const items = await loadImprovements();
+function renderImprovements(){
+  const items = loadImprovements();
   const el = document.getElementById('improvements-list');
   if(!el) return;
   const target = 5;
@@ -889,28 +884,27 @@ async function renderImprovements(){
   </div>`).join(''));
 }
 
-async function addImprovement(){
+function addImprovement(){
   const text = document.getElementById('new-improvement').value.trim();
   if(!text) return;
-  const items = await loadImprovements();
+  const items = loadImprovements();
   items.push({text, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), source:'Bi-weekly summary'});
-  await window.storage.set('improvements', JSON.stringify(items));
+  localStorage.setItem('improvements', JSON.stringify(items));
   document.getElementById('new-improvement').value='';
   document.getElementById('imp-msg').textContent='Improvement logged!';
   setTimeout(()=>{ document.getElementById('imp-msg').textContent=''; },2000);
   renderImprovements();
 }
 
-async function removeImprovement(i){
-  const items = await loadImprovements();
+function removeImprovement(i){
+  const items = loadImprovements();
   items.splice(i,1);
-  await window.storage.set('improvements', JSON.stringify(items));
+  localStorage.setItem('improvements', JSON.stringify(items));
   renderImprovements();
 }
 
 
 load();
 </script>
-
-
-</body></html>
+</body>
+</html>
