@@ -203,8 +203,6 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
-      <label>What did you learn or practice?</label>
-      <textarea id="log-notes" placeholder="Brief notes from the session — these feed into your progress reports..."></textarea>
       <label>Real ticket applied (optional — Intercom conversation ID or brief description)</label>
       <input type="text" id="log-ticket" placeholder="e.g. #215473834248644 — gateway connection issue">
       <label>Confidence after this session</label>
@@ -215,6 +213,8 @@ textarea{resize:vertical;min-height:80px}
         <span class="star" onclick="setStar(4)">★</span>
         <span class="star" onclick="setStar(5)">★</span>
       </div>
+      <label>What did you learn or practice?</label>
+      <textarea id="log-notes" placeholder="Brief notes from the session — these feed into your progress reports..."></textarea>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="saveSession()">Save session</button>
         <button class="btn" onclick="clearLog()">Clear</button>
