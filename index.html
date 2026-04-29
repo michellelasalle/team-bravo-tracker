@@ -86,12 +86,12 @@ textarea{resize:vertical;min-height:80px}
 .copy-btn{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary)}
 .copy-btn:hover{background:var(--color-background-secondary)}
 .type-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.cb-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:5px}
-.cb-pill input{display:none}
-.cb-pill.active-quiz{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
-.cb-pill.active-scenario{background:#EEEDFE;color:#3C3489;border-color:transparent}
-.cb-pill.active-explainer{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
-.cb-pill.active-foundation{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.session-type-btn{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;border:1.5px solid var(--color-border-secondary);cursor:pointer;font-size:12px;font-weight:500;color:var(--color-text-secondary);background:transparent;transition:all .15s;user-select:none}
+.session-type-btn input[type=checkbox]{width:14px;height:14px;accent-color:currentColor;cursor:pointer;flex-shrink:0}
+.session-type-btn:has(input:checked).quiz-btn{background:#FFF8E7;color:#B45309;border-color:#F59E0B}
+.session-type-btn:has(input:checked).scenario-btn{background:#EEEDFE;color:#3C3489;border-color:#7C6FF7}
+.session-type-btn:has(input:checked).explainer-btn{background:#ECFDF5;color:#065F46;border-color:#10B981}
+.session-type-btn:has(input:checked).foundation-btn{background:#EFF6FF;color:#1E40AF;border-color:#3B82F6}
 .type-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary)}
 .type-pill-label{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:5px;user-select:none}
 .type-pill-label:has(input:checked){background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
@@ -205,10 +205,10 @@ textarea{resize:vertical;min-height:80px}
         <select id="log-agent" style="margin:0" onchange="updateSessionTypes()"></select>
       </div>
       <label>Session type (select all that apply)</label>
-      <div id="type-pills-container" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-quiz" value="quiz"> Quiz</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-scenario" value="scenario"> Scenario</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-explainer" value="explainer"> Concept explainer</label>
+      <div id="type-pills-container" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <label class="session-type-btn quiz-btn"><input type="checkbox" id="cb-quiz" value="quiz"> Quiz</label>
+        <label class="session-type-btn scenario-btn"><input type="checkbox" id="cb-scenario" value="scenario"> Scenario</label>
+        <label class="session-type-btn explainer-btn"><input type="checkbox" id="cb-explainer" value="explainer"> Concept explainer</label>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
