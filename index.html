@@ -86,6 +86,12 @@ textarea{resize:vertical;min-height:80px}
 .copy-btn{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary)}
 .copy-btn:hover{background:var(--color-background-secondary)}
 .type-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cb-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:5px}
+.cb-pill input{display:none}
+.cb-pill.active-quiz{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
+.cb-pill.active-scenario{background:#EEEDFE;color:#3C3489;border-color:transparent}
+.cb-pill.active-explainer{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
+.cb-pill.active-foundation{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
 .type-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary)}
 .type-pill-label{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:5px;user-select:none}
 .type-pill-label:has(input:checked){background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
@@ -199,10 +205,10 @@ textarea{resize:vertical;min-height:80px}
         <select id="log-agent" style="margin:0" onchange="updateSessionTypes()"></select>
       </div>
       <label>Session type (select all that apply)</label>
-      <div id="type-pills-container" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-quiz" value="quiz" onchange="toggleTypeCheck(this)"> Quiz</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-scenario" value="scenario" onchange="toggleTypeCheck(this)"> Scenario</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-explainer" value="explainer" onchange="toggleTypeCheck(this)"> Concept explainer</label>
+      <div id="type-pills-container" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <label class="cb-pill" id="pill-quiz"><input type="checkbox" value="quiz" onchange="toggleTypeCheck(this)"> Quiz</label>
+        <label class="cb-pill" id="pill-scenario"><input type="checkbox" value="scenario" onchange="toggleTypeCheck(this)"> Scenario</label>
+        <label class="cb-pill" id="pill-explainer"><input type="checkbox" value="explainer" onchange="toggleTypeCheck(this)"> Concept explainer</label>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
@@ -443,21 +449,28 @@ const CHECKPOINTS = [
 
 let agents=[], docs=[], sessions=[], selectedTypes=[], selectedStar=0, selectedAgent=null;
 
-function load(){
-  try{const ar=localStorage.getItem('agents');agents=ar?JSON.parse(ar):JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
-  catch{agents=JSON.parse(JSON.stringify(DEFAULT_AGENTS));}
-  try{const dr=localStorage.getItem('docs');docs=dr?JSON.parse(dr):[...DEFAULT_DOCS];}
-  catch{docs=[...DEFAULT_DOCS];}
-  try{const sr=localStorage.getItem('sessions');sessions=sr?JSON.parse(sr):[];}
-  catch{sessions=[];}
+async function load(){
+  try{
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json');
+    const d = await r.json();
+    agents = (d && d.agents) ? d.agents : JSON.parse(JSON.stringify(DEFAULT_AGENTS));
+    docs = (d && d.docs) ? d.docs : [...DEFAULT_DOCS];
+    sessions = (d && d.sessions) ? d.sessions : [];
+  } catch(e){
+    agents = JSON.parse(JSON.stringify(DEFAULT_AGENTS));
+    docs = [...DEFAULT_DOCS];
+    sessions = [];
+  }
   renderAll();
   initTypePills();
 }
 
-function save(){
-  localStorage.setItem('agents',JSON.stringify(agents));
-  localStorage.setItem('docs',JSON.stringify(docs));
-  localStorage.setItem('sessions',JSON.stringify(sessions));
+async function save(){
+  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({agents, docs, sessions})
+  });
 }
 
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
@@ -685,10 +698,13 @@ function renderLogForm(){
 function toggleTypeCheck(checkbox){
   var type = checkbox.value;
   var idx = selectedTypes.indexOf(type);
+  var pill = document.getElementById('pill-'+type);
   if(checkbox.checked){
     if(idx === -1) selectedTypes.push(type);
+    if(pill) pill.classList.add('active-'+type);
   } else {
     if(idx > -1) selectedTypes.splice(idx, 1);
+    if(pill) pill.classList.remove('active-'+type);
   }
 }
 
@@ -736,7 +752,7 @@ function clearLog(keepAgent){
   document.getElementById('log-notes').value='';
   document.getElementById('log-ticket').value='';
   selectedTypes=[];selectedStar=0;
-  document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(c=>{c.checked=false;});
+  document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(c=>{c.checked=false;});document.querySelectorAll('.cb-pill').forEach(p=>{p.className='cb-pill';});
   document.querySelectorAll('.star').forEach(s=>s.className='star');
 }
 
@@ -878,12 +894,15 @@ function copyAllSummaries(){
   });
 }
 
-function loadImprovements(){
-  try{ const r = localStorage.getItem('improvements'); return r?JSON.parse(r):[]; }
-  catch{ return []; }
+async function loadImprovements(){
+  try{
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/improvements.json');
+    const d = await r.json();
+    return d ? d : [];
+  } catch{ return []; }
 }
 
-function renderImprovements(){
+async function renderImprovements(){
   const items = loadImprovements();
   const el = document.getElementById('improvements-list');
   if(!el) return;
@@ -907,27 +926,35 @@ function renderImprovements(){
   </div>`).join(''));
 }
 
-function addImprovement(){
+async function addImprovement(){
   const text = document.getElementById('new-improvement').value.trim();
   if(!text) return;
   const items = loadImprovements();
   items.push({text, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), source:'Bi-weekly summary'});
-  localStorage.setItem('improvements', JSON.stringify(items));
+  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/improvements.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(items)
+  });
   document.getElementById('new-improvement').value='';
   document.getElementById('imp-msg').textContent='Improvement logged!';
   setTimeout(()=>{ document.getElementById('imp-msg').textContent=''; },2000);
   renderImprovements();
 }
 
-function removeImprovement(i){
+async function removeImprovement(i){
   const items = loadImprovements();
   items.splice(i,1);
-  localStorage.setItem('improvements', JSON.stringify(items));
+  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/improvements.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(items)
+  });
   renderImprovements();
 }
 
 
-load();
+load().then(()=>{});
 </script>
 </body>
 </html>
