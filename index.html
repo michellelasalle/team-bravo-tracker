@@ -197,9 +197,9 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <label>Session type (select all that apply)</label>
       <div class="type-pills" id="type-pills-container">
-        <button class="type-pill" type="button" onclick="toggleType('quiz',this)">Quiz</button>
-        <button class="type-pill" type="button" onclick="toggleType('scenario',this)">Scenario</button>
-        <button class="type-pill" type="button" onclick="toggleType('explainer',this)">Concept explainer</button>
+        <button class="type-pill" type="button" data-type="quiz">Quiz</button>
+        <button class="type-pill" type="button" data-type="scenario">Scenario</button>
+        <button class="type-pill" type="button" data-type="explainer">Concept explainer</button>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
@@ -448,6 +448,7 @@ function load(){
   try{const sr=localStorage.getItem('sessions');sessions=sr?JSON.parse(sr):[];}
   catch{sessions=[];}
   renderAll();
+  initTypePills();
 }
 
 function save(){
@@ -682,6 +683,15 @@ function toggleType(type,el){
   const idx=selectedTypes.indexOf(type);
   if(idx>-1){selectedTypes.splice(idx,1);el.className='type-pill';}
   else{selectedTypes.push(type);el.className=`type-pill selected-${type}`;}
+}
+
+function initTypePills(){
+  document.querySelectorAll('#type-pills-container [data-type]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var type = btn.getAttribute('data-type');
+      toggleType(type, btn);
+    });
+  });
 }
 
 function setStar(n){
