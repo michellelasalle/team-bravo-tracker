@@ -462,7 +462,7 @@ async function load(){
     sessions = [];
   }
   renderAll();
-  initTypePills();
+  setTimeout(initTypePills, 100);
 }
 
 async function save(){
