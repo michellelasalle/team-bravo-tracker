@@ -466,11 +466,14 @@ async function load(){
 }
 
 async function save(){
-  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json', {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({agents, docs, sessions})
-  });
+  try{
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({agents, docs, sessions})
+    });
+    if(!r.ok) console.error('Firebase save failed:', r.status, await r.text());
+  } catch(e){ console.error('Firebase save error:', e); }
 }
 
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
@@ -903,7 +906,7 @@ async function loadImprovements(){
 }
 
 async function renderImprovements(){
-  const items = loadImprovements();
+  const items = (await loadImprovements()) || [];
   const el = document.getElementById('improvements-list');
   if(!el) return;
   const target = 5;
@@ -929,7 +932,7 @@ async function renderImprovements(){
 async function addImprovement(){
   const text = document.getElementById('new-improvement').value.trim();
   if(!text) return;
-  const items = loadImprovements();
+  const items = (await loadImprovements()) || [];
   items.push({text, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), source:'Bi-weekly summary'});
   await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/improvements.json', {
     method: 'PUT',
@@ -943,7 +946,7 @@ async function addImprovement(){
 }
 
 async function removeImprovement(i){
-  const items = loadImprovements();
+  const items = (await loadImprovements()) || [];
   items.splice(i,1);
   await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/improvements.json', {
     method: 'PUT',
