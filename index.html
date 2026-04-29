@@ -87,6 +87,9 @@ textarea{resize:vertical;min-height:80px}
 .copy-btn:hover{background:var(--color-background-secondary)}
 .type-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .type-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary)}
+.type-pill-label{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:all .15s;background:transparent;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:5px;user-select:none}
+.type-pill-label:has(input:checked){background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.type-pill-label input{display:none}
 .type-pill.selected-quiz{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
 .type-pill.selected-scenario{background:#EEEDFE;color:#3C3489;border-color:transparent}
 .type-pill.selected-explainer{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
@@ -197,9 +200,9 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <label>Session type (select all that apply)</label>
       <div class="type-pills" id="type-pills-container">
-        <button class="type-pill" type="button" data-type="quiz">Quiz</button>
-        <button class="type-pill" type="button" data-type="scenario">Scenario</button>
-        <button class="type-pill" type="button" data-type="explainer">Concept explainer</button>
+        <label class="type-pill-label"><input type="checkbox" value="quiz" onchange="toggleTypeCheck(this)"> Quiz</label>
+        <label class="type-pill-label"><input type="checkbox" value="scenario" onchange="toggleTypeCheck(this)"> Scenario</label>
+        <label class="type-pill-label"><input type="checkbox" value="explainer" onchange="toggleTypeCheck(this)"> Concept explainer</label>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
@@ -679,6 +682,16 @@ function renderLogForm(){
   updateSessionTypes();
 }
 
+function toggleTypeCheck(checkbox){
+  var type = checkbox.value;
+  var idx = selectedTypes.indexOf(type);
+  if(checkbox.checked){
+    if(idx === -1) selectedTypes.push(type);
+  } else {
+    if(idx > -1) selectedTypes.splice(idx, 1);
+  }
+}
+
 function toggleType(type,el){
   const idx=selectedTypes.indexOf(type);
   if(idx>-1){selectedTypes.splice(idx,1);el.className='type-pill';}
@@ -723,7 +736,7 @@ function clearLog(keepAgent){
   document.getElementById('log-notes').value='';
   document.getElementById('log-ticket').value='';
   selectedTypes=[];selectedStar=0;
-  document.querySelectorAll('.type-pill').forEach(p=>{p.className='type-pill';});
+  document.querySelectorAll('.type-pill').forEach(p=>{p.className='type-pill';});document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(c=>{c.checked=false;});
   document.querySelectorAll('.star').forEach(s=>s.className='star');
 }
 
