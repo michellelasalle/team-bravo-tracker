@@ -205,10 +205,10 @@ textarea{resize:vertical;min-height:80px}
         <select id="log-agent" style="margin:0" onchange="updateSessionTypes()"></select>
       </div>
       <label>Session type (select all that apply)</label>
-      <div id="type-pills-container" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-        <label class="cb-pill" id="pill-quiz"><input type="checkbox" value="quiz" onchange="toggleTypeCheck(this)"> Quiz</label>
-        <label class="cb-pill" id="pill-scenario"><input type="checkbox" value="scenario" onchange="toggleTypeCheck(this)"> Scenario</label>
-        <label class="cb-pill" id="pill-explainer"><input type="checkbox" value="explainer" onchange="toggleTypeCheck(this)"> Concept explainer</label>
+      <div id="type-pills-container" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-quiz" value="quiz"> Quiz</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-scenario" value="scenario"> Scenario</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="cb-explainer" value="explainer"> Concept explainer</label>
       </div>
       <label>Topic covered</label>
       <input type="text" id="log-topic" placeholder="e.g. PAI gateway troubleshooting">
@@ -698,17 +698,12 @@ function renderLogForm(){
   updateSessionTypes();
 }
 
-function toggleTypeCheck(checkbox){
-  var type = checkbox.value;
-  var idx = selectedTypes.indexOf(type);
-  var pill = document.getElementById('pill-'+type);
-  if(checkbox.checked){
-    if(idx === -1) selectedTypes.push(type);
-    if(pill) pill.classList.add('active-'+type);
-  } else {
-    if(idx > -1) selectedTypes.splice(idx, 1);
-    if(pill) pill.classList.remove('active-'+type);
-  }
+function getSelectedTypes(){
+  var types = [];
+  document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(function(cb){
+    if(cb.checked) types.push(cb.value);
+  });
+  return types;
 }
 
 function toggleType(type,el){
@@ -736,7 +731,7 @@ async function saveSession(){
   const topic=document.getElementById('log-topic').value.trim();
   const notes=document.getElementById('log-notes').value.trim();
   const ticket=document.getElementById('log-ticket').value.trim();
-  if(!agentId||selectedTypes.length===0){document.getElementById('log-msg').textContent='Select an agent and at least one session type.';return;}
+  selectedTypes=getSelectedTypes();if(!agentId||selectedTypes.length===0){document.getElementById('log-msg').textContent='Select an agent and at least one session type.';return;}
   const s={id:Date.now().toString(),agentId,types:[...selectedTypes],topic,notes,ticket,stars:selectedStar,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
   sessions.push(s);
   save();
@@ -755,7 +750,7 @@ function clearLog(keepAgent){
   document.getElementById('log-notes').value='';
   document.getElementById('log-ticket').value='';
   selectedTypes=[];selectedStar=0;
-  document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(c=>{c.checked=false;});document.querySelectorAll('.cb-pill').forEach(p=>{p.className='cb-pill';});
+  document.querySelectorAll('#type-pills-container input[type=checkbox]').forEach(c=>{c.checked=false;});
   document.querySelectorAll('.star').forEach(s=>s.className='star');
 }
 
