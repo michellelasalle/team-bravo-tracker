@@ -729,7 +729,11 @@ function setStar(n){
   document.querySelectorAll('.star').forEach((s,i)=>s.className='star'+(i<n?' lit':''));
 }
 
+let _saving = false;
 async function saveSession(){
+  if(_saving) return;
+  _saving = true;
+  setTimeout(()=>{ _saving = false; }, 2000);
   const agentId=document.getElementById('log-agent').value;
   const topic=document.getElementById('log-topic').value.trim();
   const notes=document.getElementById('log-notes').value.trim();
