@@ -451,14 +451,14 @@ let agents=[], docs=[], sessions=[], selectedTypes=[], selectedStar=0, selectedA
 
 async function load(){
   try{
-    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json');
-    const d = await r.json();
-    agents = (d && d.agents) ? d.agents : JSON.parse(JSON.stringify(DEFAULT_AGENTS));
-    docs = (d && d.docs) ? d.docs : [...DEFAULT_DOCS];
-    sessions = (d && d.sessions) ? d.sessions : [];
-  } catch(e){
+    // Always start with default agents structure
     agents = JSON.parse(JSON.stringify(DEFAULT_AGENTS));
     docs = [...DEFAULT_DOCS];
+    // Only load sessions from Firebase - never overwrite agents structure
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/sessions.json');
+    const d = await r.json();
+    sessions = d ? Object.values(d) : [];
+  } catch(e){
     sessions = [];
   }
   renderAll();
@@ -467,10 +467,13 @@ async function load(){
 
 async function save(){
   try{
-    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/data.json', {
-      method: 'PUT',
+    // Only save the last session (most recently added) as a new entry
+    const lastSession = sessions[sessions.length-1];
+    if(!lastSession) return;
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/sessions.json', {
+      method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({agents, docs, sessions})
+      body: JSON.stringify(lastSession)
     });
     if(!r.ok) console.error('Firebase save failed:', r.status, await r.text());
   } catch(e){ console.error('Firebase save error:', e); }
