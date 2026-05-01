@@ -170,7 +170,7 @@ textarea{resize:vertical;min-height:80px}
         <table class="mgr-table">
           <thead><tr>
             <th>Agent</th><th>Team</th><th>Sessions</th><th>Avg confidence</th>
-            <th>Checkpoints</th><th>This week</th><th>Pattern Pulse</th><th>Status</th>
+            <th>Checkpoints</th><th>This week</th><th>Status</th>
           </tr></thead>
           <tbody id="mgr-table-body"></tbody>
         </table>
@@ -183,6 +183,20 @@ textarea{resize:vertical;min-height:80px}
     </div>
 
     <div id="all-summaries-output"></div>
+
+    <div class="card">
+      <div class="card-title">Pattern Pulse log</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6">Log observations from Friday Pattern Pulse threads here. These feed into bi-weekly reports alongside session data.</div>
+      <div id="pulse-list"></div>
+      <div style="display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:flex-start;margin-top:8px">
+        <select id="pulse-agent" style="margin:0">
+          <option value="">— Agent —</option>
+        </select>
+        <textarea id="new-pulse" placeholder="What pattern did they observe this week?" style="margin:0;min-height:60px;flex:1"></textarea>
+        <button class="btn btn-primary" onclick="addPulse()" style="white-space:nowrap">Add</button>
+      </div>
+      <div id="pulse-msg" style="font-size:12px;color:var(--color-text-success);margin-top:8px;min-height:16px"></div>
+    </div>
 
     <div class="card">
       <div class="card-title">Process improvements log</div>
@@ -800,7 +814,7 @@ function showView(v){
   document.getElementById('view-'+v).classList.add('active');
   event.target.classList.add('active');
   if(v==='settings')renderSettings();
-  if(v==='manager'){renderManagerTable();renderImprovements();}
+  if(v==='manager'){renderManagerTable();renderImprovements();renderPulseLog();}
 }
 
 function showTab(tabId, btn){
@@ -855,7 +869,6 @@ async function renderManagerTable(){
       <td>${confHtml}</td>
       <td><div style="display:flex;gap:3px;align-items:center">${cpHtml}<span style="font-size:11px;color:var(--color-text-tertiary);margin-left:4px">${cpDone}/3${cpDue?' <span style=color:var(--color-text-warning)>('+cpDue+' ready)</span>':''}</span></div></td>
       <td style="font-size:13px">${recentSessions.length} session${recentSessions.length!==1?'s':''}</td>
-      <td>${pulseHtml}</td>
       <td><span class="status-dot ${statusClass}" title="${statusTitle}"></span><span style="font-size:12px;color:var(--color-text-secondary)">${statusTitle}</span></td>
     </tr>`;
   }).join('');
@@ -873,11 +886,15 @@ async function generateAllSummaries(){
     const notes = ss.map((s,i) => `Session ${i+1} (${s.date}): Types: ${s.types.join(', ')}. Topic: ${s.topic||'(none)'}. Notes: ${s.notes||'(none)'}.${s.ticket?' Ticket: '+s.ticket+'.':''} Confidence: ${s.stars||'?'}/5.`).join('\\n');
     const pulses = ss.filter(s => s.types && s.types.includes('pulse'));
     const pulseText = pulses.length ? '\\n\\nPattern Pulse observations:\\n' + pulses.map(p => `- ${p.notes}`).join('\\n') : '';
+    // Also load from pulse log
+    const allPulses = (await loadPulses()) || [];
+    const agentPulses = allPulses.filter(p => p.agentId === a.id);
+    const pulseLogText = agentPulses.length ? '\\n\\nFriday Pattern Pulse log:\\n' + agentPulses.map(p => `- ${p.date}: ${p.text}`).join('\\n') : '';
     try{
       const resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:`Write a concise bi-weekly training progress summary for ${a.name} (3–4 sentences, third person, manager-ready). Focus area: ${a.focus||'not set'}. ${a.mode==='foundation'?'Note: building CF tech support foundations from scratch.':''}
 
 Session logs:
-${notes}${pulseText}
+${notes}${pulseText}${pulseLogText||''}
 
 Cover: sessions completed, confidence trend, one strength, one area still developing. Be specific.`}]})});
       const data = await resp.json();
@@ -945,6 +962,76 @@ async function addImprovement(){
   document.getElementById('imp-msg').textContent='Improvement logged!';
   setTimeout(()=>{ document.getElementById('imp-msg').textContent=''; },2000);
   renderImprovements();
+}
+
+async function loadPulses(){
+  try{
+    const r = await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/pulses.json');
+    const d = await r.json();
+    return d ? d : [];
+  } catch{ return []; }
+}
+
+async function renderPulseLog(){
+  const items = (await loadPulses()) || [];
+  const el = document.getElementById('pulse-list');
+  if(!el) return;
+  // Populate agent dropdown
+  const sel = document.getElementById('pulse-agent');
+  if(sel && sel.options.length <= 1){
+    agents.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.id; opt.textContent = a.name;
+      sel.appendChild(opt);
+    });
+  }
+  if(items.length === 0){
+    el.innerHTML = '<div class="empty">No pulse observations logged yet</div>';
+    return;
+  }
+  el.innerHTML = items.slice().reverse().map((item, i) => `
+    <div class="improvement-item">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:2px">${item.agentName} — ${item.date}</div>
+        <div class="improvement-text">${item.text}</div>
+      </div>
+      <button class="doc-remove" onclick="removePulse(${items.length - 1 - i})">Remove</button>
+    </div>`).join('');
+}
+
+async function addPulse(){
+  const agentId = document.getElementById('pulse-agent').value;
+  const text = document.getElementById('new-pulse').value.trim();
+  if(!agentId || !text) return;
+  const agent = agents.find(a => a.id === agentId);
+  const items = (await loadPulses()) || [];
+  items.push({
+    agentId, 
+    agentName: agent ? agent.name : agentId,
+    text, 
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+  });
+  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/pulses.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(items)
+  });
+  document.getElementById('new-pulse').value = '';
+  document.getElementById('pulse-agent').value = '';
+  document.getElementById('pulse-msg').textContent = 'Observation logged!';
+  setTimeout(()=>{ document.getElementById('pulse-msg').textContent = ''; }, 2000);
+  renderPulseLog();
+}
+
+async function removePulse(i){
+  const items = (await loadPulses()) || [];
+  items.splice(i, 1);
+  await fetch('https://team-bravo-tracker-default-rtdb.firebaseio.com/pulses.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(items)
+  });
+  renderPulseLog();
 }
 
 async function removeImprovement(i){
